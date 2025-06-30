@@ -152,6 +152,7 @@ class AuthController extends Controller
         \Log::info('Verify Email Debug:', [
             'user_otp' => $user->otp,
             'request_otp' => $request->otp,
+            'email_verification_token' => $user->token,
             'otp_expires_at' => $user->otp_expires_at,
             'is_past' => Carbon::parse($user->otp_expires_at)->isPast(),
         ]);
@@ -167,6 +168,7 @@ class AuthController extends Controller
         // Verify email and reset OTP fields
         $user->forceFill([
             'email_verified_at' => now(),
+            'email_verification_token' => $user->createToken('email_verification')->plainTextToken,
             'otp' => null,
             'otp_expires_at' => null,
         ])->save();
